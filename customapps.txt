@@ -1,0 +1,21 @@
+kerbrute
+apache directory studio
+gem install evil-winrm
+Nosql-MongoDB-injection-username-password-enumeration
+flare-floss/flosso
+peas scripts
+
+steg:
+stego-toolkit
+Stegsolve.jar
+wav-steg-py
+sonicvisualizer
+
+binary:
+ida
+LibcSearcher
+Msfrop_Enhanced
+peda
+retdec
+ropgadget
+

