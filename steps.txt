@@ -3,6 +3,7 @@ Foothold
 Setup
 set ip to host name in /etc/hosts and check ports again
 Setup up burp to analyse all web requests
+Burp htb host regex ((10.*)|(.*\.htb))
 
 Enum
 Scan ports: 1-65535
@@ -30,6 +31,8 @@ check user accounts lastlogon to narrow down list
 Check for home directories in other places
 Try to get access to other accounts
 autorecon --only-scans-dir --single-target -o scans $ip --heartbeat 30
+try sqli in all fields, protocols, even websockets
+    sqlmap -u <> --crawl=2
 
 Exploit
 Find exploits:
@@ -52,6 +55,19 @@ Google for help woth:
     foothold
     privesc
     tools
+
+Second guide
+1. scan all ips, ports, (opt) snmp
+2. for each service work out
+    what's running
+    is it misconfigured: anon access, write access, blank admin password, default passwords
+    check for a public exploit
+3. for websites
+    browse them
+    run nikto
+    identify what software they're using -> whatweb
+    use more specific tools -> wpscan, joomscan cmsmap
+
 
 Services
 ========
@@ -98,11 +114,13 @@ Linux
                                         sudo -l
 Find files owned by group               find / -group david 2>/dev/null
 Find files owned by user                find / -user Matt 2>/dev/null | grep -v "/proc"
+    For lots of users
+        for i in $(ls /home); do echo $i; find / -group $i 2>/dev/null | grep -v "/proc"; done
 Find backup files                       find / -name "*.bak*" 2>/dev/null
 FInd suid binaries                      find / -perm -u=s 2>/dev/null | grep -v snap
 Check root processes                    ps -aux | grep root
                                         ls -la /etc/cron.d
-                                        cat /etc/sudoers
+                                        cat /etc/sudoers /etc/sudoers.d
                                         netstat -tupln
 Check for binaries with non absolute paths
 Check history files
